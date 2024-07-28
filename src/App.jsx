@@ -12,6 +12,7 @@ import Blog from "./pages/Blog";
 import ActivityBlog from "./pages/ActivityBlog";
 import BannerPhotos from "./pages/BannerPhotos";
 import ThreeD from "./pages/ThreeD";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="*" element={<Error />} />
         </Routes>
       </main>
+      <Toaster />
       <Footer />
     </>
   );
