@@ -18,6 +18,7 @@ import CreativeWeek from "./pages/CreativeWeek";
 import ThreeDGallery from "./components/ThreeDGallery";
 import BannerImg from "./components/BannerImg";
 import GetNotices from "./components/GetNotices";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
@@ -44,10 +45,7 @@ const App = () => {
           <Route path="/threeD" element={<ThreeD />} />
           <Route path="/get3d-photos" element={<ThreeDGallery />} />
 
-
           {/* Banner Gallery end  */}
-
-
 
           {/* last area section start*/}
           <Route path="/important-notice" element={<Notice />} />
@@ -55,11 +53,18 @@ const App = () => {
           <Route path="/testimonial" element={<Testimonial />} />
           <Route path="/creative-week" element={<CreativeWeek />} />
           {/* last area section end*/}
- 
+
+          {/* last area section start*/}
+          <Route path="/important-notice" element={<Notice />} />
+          <Route path="/get-notice" element={<GetNotices />} />
+          <Route path="/testimonial" element={<Testimonial />} />
+          <Route path="/creative-week" element={<CreativeWeek />} />
+          {/* last area section end*/}
 
           <Route path="*" element={<Error />} />
         </Routes>
       </main>
+      <Toaster />
       <Footer />
     </>
   );

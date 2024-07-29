@@ -1,12 +1,38 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Blog = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  const [newCategory, setNewCategory] = useState("");
+
+  const [addCategory, setAddCategory] = useState(false);
+
+  useEffect(() => {
+    async function getCategories() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_SERVERAPI}/api/v1/category`
+        );
+        if (response.data.success) {
+          setCategories(response.data.categories);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong with the contact form");
+      } finally {
+        setLoading(false);
+      }
+    }
+    getCategories();
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -20,7 +46,7 @@ const Blog = () => {
     if (!title) newErrors.title = "Please, enter the blog title!";
     if (!image) newErrors.image = "Please, choose an image!";
     if (!description) newErrors.description = "Please, enter the description!";
-    if (!category) newErrors.category = "Please, select a category!";
+    if (!selectedCategory) newErrors.category = "Please, select a category!";
 
     setErrors(newErrors);
 
@@ -34,29 +60,49 @@ const Blog = () => {
 
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("image", image);
+    formData.append("Blogimage", image);
     formData.append("description", description);
-    formData.append("category", category);
+    formData.append("category", selectedCategory);
 
-    
+    console.log(title, image, description, selectedCategory);
 
-    // try {
-    //   const response = await fetch('YOUR_BACKEND_API_ENDPOINT', {
-    //     method: 'POST',
-    //     body: formData
-    //   });
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVERAPI}/api/v1/blog/createblog`,
+        formData
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.error);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Error submitting form!");
+    }
+  };
 
-    //   if (response.ok) {
-    //     const result = await response.json();
-    //     console.log('Form submitted successfully:', result);
-    //   } else {
-    //     console.error('Form submission failed:', response.statusText);
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting form:', error);
-    // }
-
-
+  const addCategoryHandler = async (e) => {
+    setLoading(true);
+    console.log(newCategory);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVERAPI}/api/v1/category`,
+        { title: newCategory }
+      );
+      if (response.data.success) {
+        setCategories(response.data.categories);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong with the contact form");
+    } finally {
+      setLoading(false);
+      setAddCategory(false);
+    }
   };
 
   return (
@@ -75,7 +121,6 @@ const Blog = () => {
                       <span className="d-none d-lg-block">Latest-Blog</span>
                     </a>
                   </div>
-                  {/* End Logo */}
                   <div className="card mb-3">
                     <div className="card-body py-4">
                       <form
@@ -166,21 +211,62 @@ const Blog = () => {
                           <label htmlFor="blogcategory" className="form-label">
                             Category
                           </label>
-                          <select
-                            name="category"
-                            className={`form-select ${
-                              errors.category ? "is-invalid" : ""
-                            }`}
-                            id="blogcategory"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            required
-                          >
-                            <option value="">Choose...</option>
-                            <option value="tech">Tech</option>
-                            <option value="lifestyle">Lifestyle</option>
-                            <option value="education">Education</option>
-                          </select>
+                          {addCategory ? (
+                            <>
+                              <input
+                                type="text"
+                                placeholder="Category Name"
+                                className={`form-control ${
+                                  errors.image ? "is-invalid" : ""
+                                }`}
+                                value={newCategory}
+                                onChange={(e) => setNewCategory(e.target.value)}
+                              />
+                              <button
+                                className={`btn btn-primary w-100 my-2 ${
+                                  loading ? "wait" : ""
+                                }`}
+                                onClick={addCategoryHandler}
+                                disabled={loading}
+                              >
+                                {loading ? "Adding" : "Add"}
+                              </button>
+                            </>
+                          ) : (
+                            <select
+                              name="category"
+                              className={`form-select ${
+                                errors.category ? "is-invalid" : ""
+                              }`}
+                              id="blogcategory"
+                              value={selectedCategory}
+                              onChange={(e) =>
+                                setSelectedCategory(e.target.value)
+                              }
+                              required
+                            >
+                              <option value="">Choose...</option>
+                              {!loading && categories && categories.length ? (
+                                categories.map((x, i) => {
+                                  return (
+                                    <option value={x._id} key={i}>
+                                      {x.title}
+                                    </option>
+                                  );
+                                })
+                              ) : (
+                                <option value="" disabled>
+                                  No categories
+                                </option>
+                              )}
+                              <option
+                                value=""
+                                onClick={() => setAddCategory(true)}
+                              >
+                                + Add Category
+                              </option>
+                            </select>
+                          )}
                           {errors.category && (
                             <div className="invalid-feedback">
                               {errors.category}
