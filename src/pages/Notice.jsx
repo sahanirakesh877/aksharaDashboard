@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { axios } from 'axios';
+import  axios  from 'axios';
+import toast from "react-hot-toast";
 
 const Notice = () => {
   const [image, setImage] = useState(null);
@@ -24,17 +25,17 @@ const Notice = () => {
     }
 
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("Noticeimage", image);
 
     try {
       const response = await axios.post(
         "http://localhost:5000/api/v1/notice/createnotice",
+        formData
         
       );
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Form submitted successfully:", result);
+      if (response.data.success) {
+       toast.success(response.data.message)
       } else {
         console.error("Form submission failed:", response.statusText);
       }
@@ -53,7 +54,7 @@ const Notice = () => {
                 <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
                   <h3 className="d-flex justify-content-center py-4 ">
                     <span className="d-none d-lg-block border-bottom border-danger border-2">
-                      Notices
+                      Noticess
                     </span>
                   </h3>
                   <div className="card mb-3">
