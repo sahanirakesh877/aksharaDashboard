@@ -207,74 +207,75 @@ const Blog = () => {
                           )}
                         </div>
 
-       
-
-<div className="col-12">
-  <label htmlFor="blogcategory" className="form-label">
-    Category
-  </label>
-  {addCategory ? (
-    <>
-      <input
-        type="text"
-        placeholder="Category Name"
-        className={`form-control ${errors.image ? "is-invalid" : ""}`}
-        value={newCategory}
-        onChange={(e) => setNewCategory(e.target.value)}
-      />
-      <button
-        className={`btn btn-primary w-100 my-2 ${loading ? "wait" : ""}`}
-        onClick={addCategoryHandler}
-        disabled={loading}
-      >
-        {loading ? "Adding" : "Add"}
-      </button>
-      <button
-        className="btn btn-secondary w-100 my-2"
-        onClick={() => setAddCategory(false)}
-      >
-        Cancel
-      </button>
-    </>
-  ) : (
-    <select
-      name="category"
-      className={`form-select ${errors.category ? "is-invalid" : ""}`}
-      id="blogcategory"
-      value={selectedCategory}
-      onChange={(e) => {
-        if (e.target.value === "add-new") {
-          setAddCategory(true);
-        } else {
-          setSelectedCategory(e.target.value);
-        }
-      }}
-      required
-    >
-      <option value="">Choose...</option>
-      {!loading && categories && categories.length ? (
-        categories.map((x, i) => (
-          <option value={x._id} key={i}>
-            {x.title}
-          </option>
-        ))
-      ) : (
-        <option value="" disabled>
-          No categories
-        </option>
-      )}
-      <option value="add-new">+ Add Category</option>
-    </select>
-  )}
-  {errors.category && (
-    <div className="invalid-feedback">
-      {errors.category}
-    </div>
-  )}
-</div>
-
-
-
+                        <div className="col-12">
+                          <label htmlFor="blogcategory" className="form-label">
+                            Category
+                          </label>
+                          {addCategory ? (
+                            <>
+                              <input
+                                type="text"
+                                placeholder="Category Name"
+                                className={`form-control ${
+                                  errors.image ? "is-invalid" : ""
+                                }`}
+                                value={newCategory}
+                                onChange={(e) => setNewCategory(e.target.value)}
+                              />
+                              <button
+                                className={`btn btn-primary w-100 my-2 ${
+                                  loading ? "wait" : ""
+                                }`}
+                                onClick={addCategoryHandler}
+                                disabled={loading}
+                              >
+                                {loading ? "Adding" : "Add"}
+                              </button>
+                              <button
+                                className="btn btn-secondary w-100 my-2"
+                                onClick={() => setAddCategory(false)}
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          ) : (
+                            <select
+                              name="category"
+                              className={`form-select ${
+                                errors.category ? "is-invalid" : ""
+                              }`}
+                              id="blogcategory"
+                              value={selectedCategory}
+                              onChange={(e) => {
+                                if (e.target.value === "add-new") {
+                                  setAddCategory(true);
+                                } else {
+                                  setSelectedCategory(e.target.value);
+                                }
+                              }}
+                              required
+                            >
+                              <option value="">Choose...</option>
+                              {!loading && categories && categories.length ? (
+                                categories.map((x, i) => (
+                                  <option value={x._id} key={i}>
+                                    {x.title}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  No categories
+                                </option>
+                              )}
+                              <option value="add-new">+ Add Category</option>
+                            </select>
+                          )}
+                          {errors.category && (
+                            <div className="invalid-feedback">
+                              {errors.category}
+                            </div>
+                          )}
+                        </div>
 
                         <div className="col-12">
                           <button
