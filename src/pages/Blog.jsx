@@ -6,8 +6,9 @@ const Blog = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState([]);
-  const [loading, setLoading] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [newCategory, setNewCategory] = useState("");
@@ -21,14 +22,13 @@ const Blog = () => {
           `${import.meta.env.VITE_SERVERAPI}/api/v1/category`
         );
         if (response.data.success) {
-          console.log(response.data);
-          setCategory([...response.data.categories]);
+          setCategories(response.data.categories);
         }
       } catch (err) {
         console.error(err);
         alert("Something went wrong with the contact form");
       } finally {
-        setLoading(false); // Ensure loading is set to false after the request is complete
+        setLoading(false);
       }
     }
     getCategories();
@@ -46,7 +46,7 @@ const Blog = () => {
     if (!title) newErrors.title = "Please, enter the blog title!";
     if (!image) newErrors.image = "Please, choose an image!";
     if (!description) newErrors.description = "Please, enter the description!";
-    if (!category) newErrors.category = "Please, select a category!";
+    if (!selectedCategory) newErrors.category = "Please, select a category!";
 
     setErrors(newErrors);
 
@@ -62,22 +62,24 @@ const Blog = () => {
     formData.append("title", title);
     formData.append("image", image);
     formData.append("description", description);
-    formData.append("category", category);
+    formData.append("category", selectedCategory);
+
+    console.log();
 
     // try {
-    //   const response = await fetch('YOUR_BACKEND_API_ENDPOINT', {
-    //     method: 'POST',
-    //     body: formData
-    //   });
-
-    //   if (response.ok) {
-    //     const result = await response.json();
-    //     console.log('Form submitted successfully:', result);
+    //   const response = await axios.post(
+    //     `${import.meta.env.VITE_SERVERAPI}/api/v1/category`,
+    //     formData
+    //   );
+    //   if (response.data.success) {
+    //     setCategories(response.data.categories);
+    //     toast.success(response.data.message);
     //   } else {
-    //     console.error('Form submission failed:', response.statusText);
+    //     toast.error(response.data.error);
     //   }
     // } catch (error) {
-    //   console.error('Error submitting form:', error);
+    //   console.error("Error submitting form:", error);
+    //   toast.error("Error submitting form!");
     // }
   };
 
@@ -86,10 +88,10 @@ const Blog = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_SERVERAPI}/api/v1/category`,
-        { newCategory }
+        { title: newCategory }
       );
       if (response.data.success) {
-        setCategory(response.data.categories);
+        setCategories(response.data.categories);
         toast.success(response.data.message);
       } else {
         toast.error(response.data.error);
@@ -119,7 +121,6 @@ const Blog = () => {
                       <span className="d-none d-lg-block">Latest-Blog</span>
                     </a>
                   </div>
-                  {/* End Logo */}
                   <div className="card mb-3">
                     <div className="card-body py-4">
                       <form
@@ -238,24 +239,24 @@ const Blog = () => {
                                 errors.category ? "is-invalid" : ""
                               }`}
                               id="blogcategory"
+                              value={selectedCategory}
+                              onChange={(e) =>
+                                setSelectedCategory(e.target.value)
+                              }
                               required
                             >
                               <option value="">Choose...</option>
-                              {!loading && category && category.length ? (
-                                category.map((x, i) => {
+                              {!loading && categories && categories.length ? (
+                                categories.map((x, i) => {
                                   return (
-                                    <option
-                                      value={x._id}
-                                      key={i}
-                                      onClick={() => setCategory(x.id)}
-                                    >
+                                    <option value={x._id} key={i}>
                                       {x.title}
                                     </option>
                                   );
                                 })
                               ) : (
                                 <option value="" disabled>
-                                  no categories
+                                  No categories
                                 </option>
                               )}
                               <option
@@ -264,10 +265,6 @@ const Blog = () => {
                               >
                                 + Add Category
                               </option>
-
-                              {/* <option value="tech">Tech</option>
-                              <option value="lifestyle">Lifestyle</option>
-                              <option value="education">Education</option> */}
                             </select>
                           )}
                           {errors.category && (
