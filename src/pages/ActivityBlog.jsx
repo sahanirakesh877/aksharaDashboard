@@ -69,7 +69,7 @@ const ActivityBlog = () => {
                       href="index.html"
                       className="logo d-flex align-items-center w-auto"
                     >
-                      <span className="d-none d-lg-block">Latest-Blog</span>
+                      <span className="d-none d-lg-block">Activity-Blog</span>
                     </a>
                   </div>
                   {/* End Logo */}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const BannerPhotos = () => {
+const Notice = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -53,7 +53,7 @@ const BannerPhotos = () => {
               <div className="row justify-content-center">
                 <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
                 <h3 className="d-flex justify-content-center py-4 ">
-                    <span className="d-none d-lg-block border-bottom border-danger border-2">Hero Photos</span>
+                    <span className="d-none d-lg-block border-bottom border-danger border-2">Notices</span>
                   </h3>
                   <div className="card mb-3">
                     <div className="card-body py-4">
@@ -107,4 +107,4 @@ const BannerPhotos = () => {
   );
 };
 
-export default BannerPhotos;
+export default Notice;

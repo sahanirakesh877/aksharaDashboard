@@ -12,6 +12,12 @@ import Blog from "./pages/Blog";
 import ActivityBlog from "./pages/ActivityBlog";
 import BannerPhotos from "./pages/BannerPhotos";
 import ThreeD from "./pages/ThreeD";
+import Notice from "./pages/Notice";
+import Testimonial from "./pages/Testimonial";
+import CreativeWeek from "./pages/CreativeWeek";
+import ThreeDGallery from "./components/ThreeDGallery";
+import BannerImg from "./components/BannerImg";
+import GetNotices from "./components/GetNotices";
 
 const App = () => {
   return (
@@ -33,9 +39,23 @@ const App = () => {
 
           {/* Banner Gallery start  */}
           <Route path="/banner-photo" element={<BannerPhotos />} />
+          <Route path="/banner-img" element={<BannerImg />} />
+
           <Route path="/threeD" element={<ThreeD />} />
+          <Route path="/get3d-photos" element={<ThreeDGallery />} />
+
 
           {/* Banner Gallery end  */}
+
+
+
+          {/* last area section start*/}
+          <Route path="/important-notice" element={<Notice />} />
+          <Route path="/get-notice" element={<GetNotices />} />
+          <Route path="/testimonial" element={<Testimonial />} />
+          <Route path="/creative-week" element={<CreativeWeek />} />
+          {/* last area section end*/}
+ 
 
           <Route path="*" element={<Error />} />
         </Routes>

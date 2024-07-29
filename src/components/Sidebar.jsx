@@ -8,7 +8,7 @@ const Sidebar = () => {
 <aside id="sidebar" className="sidebar">
   <ul className="sidebar-nav" id="sidebar-nav">
     <li className="nav-item">
-      <a className="nav-link " href="index.html">
+      <a className="nav-link " href="/">
         <i className="bi bi-grid" />
         <span>Dashboard</span>
       </a>
@@ -18,70 +18,23 @@ const Sidebar = () => {
         <i className="bi bi-menu-button-wide" /><span>Components</span><i className="bi bi-chevron-down ms-auto" />
       </a>
       <ul id="components-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
+       
+     
+     
         <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Alerts</span>
-          </a>
+          <Link to='/get3d-photos'>
+            <i className="bi bi-circle" /><span>3D-Image Gallery</span>
+          </Link>
         </li>
         <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Accordion</span>
-          </a>
+        <Link to='/banner-img'>
+            <i className="bi bi-circle" /><span>Hero Image</span>
+          </Link>
         </li>
         <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Badges</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Breadcrumbs</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Buttons</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Cards</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Carousel</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>List group</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Modal</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Tabs</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Pagination</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Progress</span>
-          </a>
-        </li>
-        <li>
-          <a href>
-            <i className="bi bi-circle" /><span>Spinners</span>
-          </a>
+        <Link to='/get-notice'>
+            <i className="bi bi-circle" /><span>All Notices</span>
+          </Link>
         </li>
         <li>
           <a href>
@@ -116,6 +69,16 @@ const Sidebar = () => {
         <li>
           <Link to='/threeD'>
             <i className="bi bi-circle" /><span>3-D gallery Rotation</span>
+          </Link>
+        </li>
+        <li>
+          <Link to='/testimonial'>
+            <i className="bi bi-circle" /><span>Testimonial</span>
+          </Link>
+        </li>
+        <li>
+          <Link to='/important-notice'>
+            <i className="bi bi-circle" /><span>Notices</span>
           </Link>
         </li>
       </ul>

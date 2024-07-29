@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ThreeD = () => {
+  const navigate=useNavigate()
+
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -10,7 +13,7 @@ const ThreeD = () => {
     if (file) {
       setImage(file);
       setImagePreview(URL.createObjectURL(file));
-      setErrors({ ...errors, image: '' });
+      setErrors({ ...errors, image: "" });
     }
   };
 
@@ -18,13 +21,12 @@ const ThreeD = () => {
     e.preventDefault();
 
     if (!image) {
-      setErrors({ ...errors, image: 'Please, choose an image!' });
+      setErrors({ ...errors, image: "Please, choose an image!" });
       return;
     }
 
     const formData = new FormData();
-    formData.append('image', image);
-  
+    formData.append("image", image);
 
     // try {
     //   const response = await fetch('YOUR_BACKEND_API_ENDPOINT', {
@@ -42,6 +44,9 @@ const ThreeD = () => {
     //   console.error('Error submitting form:', error);
     // }
   };
+  const handleNavigate = () => {
+    navigate('/get3d-photos');
+  };
 
   return (
     <>
@@ -51,30 +56,38 @@ const ThreeD = () => {
             <div className="container">
               <div className="row justify-content-center">
                 <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-                  <h3 className="d-flex justify-content-center py-4">
-                    <span className="d-none d-lg-block">3-D Rotation Image</span>
+                  <h3 className="d-flex justify-content-center py-4 ">
+                    <span className="d-none d-lg-block border-bottom border-danger border-2">
+                      3-D Rotation Image
+                    </span>
                   </h3>
                   <div className="card mb-3">
                     <div className="card-body py-4">
                       <form
                         className="row g-3 needs-validation"
                         noValidate
-                        method='post'
+                        method="post"
                         onSubmit={handleSubmit}
                       >
                         <div className="col-12">
-                          <label htmlFor="blogimage" className="form-label">Image</label>
+                          <label htmlFor="blogimage" className="form-label">
+                            Image
+                          </label>
                           <input
                             type="file"
                             name="image"
-                            className={`form-control ${errors.image ? 'is-invalid' : ''}`}
+                            className={`form-control ${
+                              errors.image ? "is-invalid" : ""
+                            }`}
                             id="blogimage"
                             accept="image/*"
                             onChange={handleImageChange}
                             required
                           />
                           {errors.image && (
-                            <div className="invalid-feedback">{errors.image}</div>
+                            <div className="invalid-feedback">
+                              {errors.image}
+                            </div>
                           )}
                         </div>
 
@@ -89,11 +102,23 @@ const ThreeD = () => {
                         )}
 
                         <div className="col-12">
-                          <button className="btn btn-primary w-100" type="submit">
+                          <button
+                            className="btn btn-primary w-100"
+                            type="submit"
+                          >
                             Upload Banner Photo
                           </button>
                         </div>
                       </form>
+                      <div className="my-3">
+                        <button
+                          className="btn btn-primary w-100 "
+                          type="submit" 
+                          onClick={handleNavigate}
+                        >
+                          Get all Photos
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -107,4 +132,3 @@ const ThreeD = () => {
 };
 
 export default ThreeD;
-

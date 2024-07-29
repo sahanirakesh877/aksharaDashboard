@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-const Blog = () => {
-  const [title, setTitle] = useState("");
+const Testimonial = () => {
+  const [title, setTitle] = useState('');
   const [image, setImage] = useState(null);
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [parentname, setParentname] = useState('');
+  const [feedback, setFeedback] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
 
@@ -17,10 +17,10 @@ const Blog = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!title) newErrors.title = "Please, enter the blog title!";
-    if (!image) newErrors.image = "Please, choose an image!";
-    if (!description) newErrors.description = "Please, enter the description!";
-    if (!category) newErrors.category = "Please, select a category!";
+    if (!title) newErrors.title = 'Please, enter the blog title!';
+    if (!image) newErrors.image = 'Please, choose an image!';
+    if (!parentname) newErrors.parentname = 'Please, enter the parent name!';
+    if (!feedback) newErrors.feedback = 'Please, enter the feedback!';
 
     setErrors(newErrors);
 
@@ -33,13 +33,13 @@ const Blog = () => {
     if (!validateForm()) return;
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("image", image);
-    formData.append("description", description);
-    formData.append("category", category);
+    formData.append('title', title);
+    formData.append('image', image);
+    formData.append('parentname', parentname);
+    formData.append('feedback', feedback);
+ 
 
-    
-
+    // Uncomment and replace with your backend API endpoint
     // try {
     //   const response = await fetch('YOUR_BACKEND_API_ENDPOINT', {
     //     method: 'POST',
@@ -55,8 +55,6 @@ const Blog = () => {
     // } catch (error) {
     //   console.error('Error submitting form:', error);
     // }
-
-
   };
 
   return (
@@ -72,7 +70,7 @@ const Blog = () => {
                       href="index.html"
                       className="logo d-flex align-items-center w-auto"
                     >
-                      <span className="d-none d-lg-block">Latest-Blog</span>
+                      <span className="d-none d-lg-block">Testimonial section</span>
                     </a>
                   </div>
                   {/* End Logo */}
@@ -84,16 +82,14 @@ const Blog = () => {
                         onSubmit={handleSubmit}
                       >
                         <div className="col-12">
-                          <label htmlFor="blogtitle" className="form-label">
-                            Blog Title
+                          <label htmlFor="maintitle" className="form-label">
+                            Main Title
                           </label>
                           <input
                             type="text"
                             name="title"
-                            className={`form-control ${
-                              errors.title ? "is-invalid" : ""
-                            }`}
-                            id="blogtitle"
+                            className={`form-control ${errors.title ? 'is-invalid' : ''}`}
+                            id="maintitle"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
@@ -106,16 +102,34 @@ const Blog = () => {
                         </div>
 
                         <div className="col-12">
-                          <label htmlFor="blogimage" className="form-label">
+                          <label htmlFor="parentname" className="form-label">
+                            Parent Name
+                          </label>
+                          <input
+                            type="text"
+                            name="parentname"
+                            className={`form-control ${errors.parentname ? 'is-invalid' : ''}`}
+                            id="parentname"
+                            value={parentname}
+                            onChange={(e) => setParentname(e.target.value)}
+                            required
+                          />
+                          {errors.parentname && (
+                            <div className="invalid-feedback">
+                              {errors.parentname}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="col-12">
+                          <label htmlFor="testimonialimage" className="form-label">
                             Image
                           </label>
                           <input
                             type="file"
                             name="image"
-                            className={`form-control ${
-                              errors.image ? "is-invalid" : ""
-                            }`}
-                            id="blogimage"
+                            className={`form-control ${errors.image ? 'is-invalid' : ''}`}
+                            id="testimonialimage"
                             accept="image/*"
                             onChange={handleImageChange}
                             required
@@ -139,51 +153,23 @@ const Blog = () => {
 
                         <div className="col-12">
                           <label
-                            htmlFor="blogdescription"
+                            htmlFor="parentfeedback"
                             className="form-label"
                           >
-                            Description
+                            Feedback
                           </label>
                           <textarea
-                            name="description"
-                            className={`form-control ${
-                              errors.description ? "is-invalid" : ""
-                            }`}
-                            id="blogdescription"
+                            name="feedback"
+                            className={`form-control ${errors.feedback ? 'is-invalid' : ''}`}
+                            id="parentfeedback"
                             rows="4"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                            value={feedback}
+                            onChange={(e) => setFeedback(e.target.value)}
                             required
                           ></textarea>
-                          {errors.description && (
+                          {errors.feedback && (
                             <div className="invalid-feedback">
-                              {errors.description}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="col-12">
-                          <label htmlFor="blogcategory" className="form-label">
-                            Category
-                          </label>
-                          <select
-                            name="category"
-                            className={`form-select ${
-                              errors.category ? "is-invalid" : ""
-                            }`}
-                            id="blogcategory"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            required
-                          >
-                            <option value="">Choose...</option>
-                            <option value="tech">Tech</option>
-                            <option value="lifestyle">Lifestyle</option>
-                            <option value="education">Education</option>
-                          </select>
-                          {errors.category && (
-                            <div className="invalid-feedback">
-                              {errors.category}
+                              {errors.feedback}
                             </div>
                           )}
                         </div>
@@ -193,7 +179,7 @@ const Blog = () => {
                             className="btn btn-primary w-100"
                             type="submit"
                           >
-                            Create Blog
+                            Post Testimonial
                           </button>
                         </div>
                       </form>
@@ -209,4 +195,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default Testimonial;

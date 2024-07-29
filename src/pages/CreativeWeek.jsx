@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Blog = () => {
+const CreativeWeek = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
@@ -209,4 +209,5 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default CreativeWeek;
+

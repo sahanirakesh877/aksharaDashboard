@@ -8,9 +8,12 @@ const Header = () => {
 <header id="header" className="header fixed-top d-flex align-items-center">
   <div className="d-flex align-items-center justify-content-between">
     <a href="/" className="logo d-flex align-items-center">
-      <img src="/akasharalogo.png" alt className='  img-fluid border' />
+      <img src="/akasharalogo.png" alt className='img-fluid ' />
     </a>
-    <i className="bi bi-list toggle-sidebar-btn" />
+
+
+    <i className="bi bi-list toggle-sidebar-btn border" />
+    
   </div>{/* End Logo */}
 
   <div className="search-bar">
@@ -19,13 +22,21 @@ const Header = () => {
       <button type="submit" title="Search"><i className="bi bi-search" /></button>
     </form>
   </div>{/* End Search Bar */}
+
+  
   <nav className="header-nav ms-auto">
     <ul className="d-flex align-items-center">
+
+
       <li className="nav-item d-block d-lg-none">
-        <a className="nav-link nav-icon search-bar-toggle " href="#">
+        <a className="nav-link nav-icon search-bar-toggle " href="/">
           <i className="bi bi-search" />
         </a>
       </li>{/* End Search Icon*/}
+
+
+
+
       <li className="nav-item dropdown">
         <a className="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
           <i className="bi bi-bell" />
@@ -144,6 +155,8 @@ const Header = () => {
             <a href="#">Show all messages</a>
           </li>
         </ul>{/* End Messages Dropdown Items */}
+
+
       </li>{/* End Messages Nav */}
       <li className="nav-item dropdown pe-3">
         <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
@@ -193,6 +206,8 @@ const Header = () => {
           </li>
         </ul>{/* End Profile Dropdown Items */}
       </li>{/* End Profile Nav */}
+
+
     </ul>
   </nav>{/* End Icons Navigation */}
 </header>
