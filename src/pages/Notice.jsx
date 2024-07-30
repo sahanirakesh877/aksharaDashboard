@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { axios } from 'axios';
+import axios from "axios";
 
 const Notice = () => {
   const [image, setImage] = useState(null);
@@ -28,8 +28,7 @@ const Notice = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/notice/createnotice",
-        
+        "http://localhost:5000/api/v1/notice/createnotice"
       );
 
       if (response.ok) {
@@ -58,8 +57,6 @@ const Notice = () => {
                   </h3>
                   <div className="card mb-3">
                     <div className="card-body py-4">
-
-
                       <form
                         className="row g-3 needs-validation"
                         noValidate
@@ -107,8 +104,6 @@ const Notice = () => {
                           </button>
                         </div>
                       </form>
-
-                      
                     </div>
                   </div>
                 </div>

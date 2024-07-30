@@ -1,6 +1,24 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import "ckeditor5/ckeditor5.css";
+
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import {
+  ClassicEditor,
+  Bold,
+  Essentials,
+  Heading,
+  Indent,
+  IndentBlock,
+  Italic,
+  Link,
+  List,
+  MediaEmbed,
+  Paragraph,
+  Table,
+  Undo,
+} from "ckeditor5";
 
 const Blog = () => {
   const [title, setTitle] = useState("");
@@ -9,6 +27,7 @@ const Blog = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [loading, setLoading] = useState(false);
+  const [blogSubmitLoading, setBlogSubmitLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [newCategory, setNewCategory] = useState("");
@@ -73,6 +92,12 @@ const Blog = () => {
       );
       if (response.data.success) {
         toast.success(response.data.message);
+        setTitle("");
+        setImage(null);
+        setDescription("");
+        setSelectedCategory("");
+        setImagePreview(null);
+        setErrors({});
       } else {
         toast.error(response.data.error);
       }
@@ -109,22 +134,24 @@ const Blog = () => {
     <>
       <main>
         <div className="container">
-          <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+          <section className="section border register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+            <div className="container w-100">
+              <div className="row justify-content-center w-100">
+                <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center w-100">
                   <div className="d-flex justify-content-center py-4">
                     <a
                       href="index.html"
                       className="logo d-flex align-items-center w-auto"
                     >
-                      <span className="d-none d-lg-block">Latest-Blog</span>
+                      <span className="d-none d-lg-block">
+                        Create Blog Form
+                      </span>
                     </a>
                   </div>
-                  <div className="card mb-3">
+                  <div className="card mb-3 ms-5 w-100">
                     <div className="card-body py-4">
                       <form
-                        className="row g-3 needs-validation"
+                        className="row g-3 needs-validation w-100"
                         noValidate
                         onSubmit={handleSubmit}
                       >
@@ -173,33 +200,73 @@ const Blog = () => {
                         </div>
 
                         {imagePreview && (
-                          <div className="col-12">
+                          <div className="col-12 d-flex justify-content-center align-items-center flex-column">
                             <img
                               src={imagePreview}
                               alt="Selected"
                               className="img-fluid"
                             />
+                            <button
+                              className="bg-danger text-white p-2 mt-3"
+                              onClick={() => {
+                                setImage(null);
+                                setImagePreview(null);
+                              }}
+                            >
+                              cancel
+                            </button>
                           </div>
                         )}
 
                         <div className="col-12">
                           <label
-                            htmlFor="blogdescription"
+                            htmlFor="blogDescription"
                             className="form-label"
                           >
                             Description
                           </label>
-                          <textarea
-                            name="description"
-                            className={`form-control ${
-                              errors.description ? "is-invalid" : ""
-                            }`}
-                            id="blogdescription"
-                            rows="4"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            required
-                          ></textarea>
+                          <CKEditor
+                            editor={ClassicEditor}
+                            id="blogDescription"
+                            config={{
+                              toolbar: [
+                                "undo",
+                                "redo",
+                                "|",
+                                "heading",
+                                "|",
+                                "bold",
+                                "italic",
+                                "|",
+                                "link",
+                                "insertTable",
+                                "mediaEmbed",
+                                "|",
+                                "bulletedList",
+                                "numberedList",
+                                "indent",
+                                "outdent",
+                              ],
+                              plugins: [
+                                Bold,
+                                Essentials,
+                                Heading,
+                                Indent,
+                                IndentBlock,
+                                Italic,
+                                Link,
+                                List,
+                                MediaEmbed,
+                                Paragraph,
+                                Table,
+                                Undo,
+                              ],
+                            }}
+                            onChange={(event, editor) => {
+                              const data = editor.getData();
+                              setDescription(data);
+                            }}
+                          />
                           {errors.description && (
                             <div className="invalid-feedback">
                               {errors.description}
@@ -207,74 +274,75 @@ const Blog = () => {
                           )}
                         </div>
 
-       
-
-<div className="col-12">
-  <label htmlFor="blogcategory" className="form-label">
-    Category
-  </label>
-  {addCategory ? (
-    <>
-      <input
-        type="text"
-        placeholder="Category Name"
-        className={`form-control ${errors.image ? "is-invalid" : ""}`}
-        value={newCategory}
-        onChange={(e) => setNewCategory(e.target.value)}
-      />
-      <button
-        className={`btn btn-primary w-100 my-2 ${loading ? "wait" : ""}`}
-        onClick={addCategoryHandler}
-        disabled={loading}
-      >
-        {loading ? "Adding" : "Add"}
-      </button>
-      <button
-        className="btn btn-secondary w-100 my-2"
-        onClick={() => setAddCategory(false)}
-      >
-        Cancel
-      </button>
-    </>
-  ) : (
-    <select
-      name="category"
-      className={`form-select ${errors.category ? "is-invalid" : ""}`}
-      id="blogcategory"
-      value={selectedCategory}
-      onChange={(e) => {
-        if (e.target.value === "add-new") {
-          setAddCategory(true);
-        } else {
-          setSelectedCategory(e.target.value);
-        }
-      }}
-      required
-    >
-      <option value="">Choose...</option>
-      {!loading && categories && categories.length ? (
-        categories.map((x, i) => (
-          <option value={x._id} key={i}>
-            {x.title}
-          </option>
-        ))
-      ) : (
-        <option value="" disabled>
-          No categories
-        </option>
-      )}
-      <option value="add-new">+ Add Category</option>
-    </select>
-  )}
-  {errors.category && (
-    <div className="invalid-feedback">
-      {errors.category}
-    </div>
-  )}
-</div>
-
-
-
+                        <div className="col-12">
+                          <label htmlFor="blogcategory" className="form-label">
+                            Category
+                          </label>
+                          {addCategory ? (
+                            <>
+                              <input
+                                type="text"
+                                placeholder="Category Name"
+                                className={`form-control ${
+                                  errors.image ? "is-invalid" : ""
+                                }`}
+                                value={newCategory}
+                                onChange={(e) => setNewCategory(e.target.value)}
+                              />
+                              <button
+                                className={`btn btn-primary w-100 my-2 ${
+                                  loading ? "wait" : ""
+                                }`}
+                                onClick={addCategoryHandler}
+                                disabled={loading}
+                              >
+                                {loading ? "Adding" : "Add"}
+                              </button>
+                              <button
+                                className="btn btn-secondary w-100 my-2"
+                                onClick={() => setAddCategory(false)}
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          ) : (
+                            <select
+                              name="category"
+                              className={`form-select ${
+                                errors.category ? "is-invalid" : ""
+                              }`}
+                              id="blogcategory"
+                              value={selectedCategory}
+                              onChange={(e) => {
+                                if (e.target.value === "add-new") {
+                                  setAddCategory(true);
+                                } else {
+                                  setSelectedCategory(e.target.value);
+                                }
+                              }}
+                              required
+                            >
+                              <option value="">Choose...</option>
+                              {!loading && categories && categories.length ? (
+                                categories.map((x, i) => (
+                                  <option value={x._id} key={i}>
+                                    {x.title}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  No categories
+                                </option>
+                              )}
+                              <option value="add-new">+ Add Category</option>
+                            </select>
+                          )}
+                          {errors.category && (
+                            <div className="invalid-feedback">
+                              {errors.category}
+                            </div>
+                          )}
+                        </div>
 
                         <div className="col-12">
                           <button
