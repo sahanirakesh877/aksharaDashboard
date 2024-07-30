@@ -51,22 +51,22 @@ const ThreeDGallery = () => {
 
   return (
     <main>
-      <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-        <h3 className="d-flex justify-content-center py-4">
-          <span className="d-none d-lg-block border-bottom border-danger border-2">
+      <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-start py-4">
+        <h3 className="d-flex justify-content-center pt-5">
+          <span className="d-none d-lg-block border-bottom border-danger text-success border-2 fw-semibold">
             3D Photos
           </span>
         </h3>
         <div className="container">
-          <div className="table-responsive">
+          <div className="table-responsive ms-5">
             <table className="table table-striped table-bordered">
-              <thead className="thead-dark">
+              <thead className="thead-dark border border-danger">
                 <tr>
-                  <th>Image</th>
-                  <th>Actions</th>
+                  <th className="text-center">Image</th>
+                  <th className="text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="border border-info">
                 {data.map((item, index) => (
                   <tr key={index}>
                     <td className="text-center">
@@ -82,14 +82,14 @@ const ThreeDGallery = () => {
                     </td>
                     <td className="text-center">
                       <button
-                        className="btn btn-info btn-sm mx-1"
+                        className="btn btn-info btn-md text-white mx-1"
                         onClick={() => handleView(item.id)}
                       >
                         <i className="bi bi-eye"></i>
                       </button>
 
                       <button
-                        className="btn btn-danger btn-sm mx-1"
+                        className="btn btn-danger btn-md mx-1"
                         onClick={() => handleDelete(item._id)}
                       >
                         <i className="bi bi-trash"></i>
