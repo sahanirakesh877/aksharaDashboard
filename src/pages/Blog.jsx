@@ -100,7 +100,7 @@ const Blog = () => {
         setSelectedCategory("");
         setImagePreview(null);
         setErrors({});
-        editorRef.current.editor.setData("");
+        editorRef.current.setData("");
       } else {
         toast.error(response.data.error);
       }
