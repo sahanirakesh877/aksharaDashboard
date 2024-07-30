@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import  axios  from 'axios';
 import toast from "react-hot-toast";
 
@@ -6,6 +6,7 @@ const Notice = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  const fileInputRef = useRef(null);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -36,6 +37,9 @@ const Notice = () => {
 
       if (response.data.success) {
        toast.success(response.data.message)
+       setImage(null);
+       setImagePreview(null);
+       fileInputRef.current.value = null;
       } else {
         console.error("Form submission failed:", response.statusText);
       }
@@ -68,7 +72,7 @@ const Notice = () => {
                         onSubmit={handleSubmit}
                       >
                         <div className="col-12">
-                          <label htmlFor="blogimage" className="form-label">
+                          <label htmlFor="noticeimage" className="form-label">
                             Image
                           </label>
                           <input
@@ -77,10 +81,11 @@ const Notice = () => {
                             className={`form-control ${
                               errors.image ? "is-invalid" : ""
                             }`}
-                            id="blogimage"
+                            id="noticeimage"
                             accept="image/*"
                             onChange={handleImageChange}
                             required
+                            ref={fileInputRef}
                           />
                           {errors.image && (
                             <div className="invalid-feedback">
@@ -95,6 +100,7 @@ const Notice = () => {
                               src={imagePreview}
                               alt="Selected"
                               className="img-fluid"
+                              
                             />
                           </div>
                         )}
