@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const ThreeD = () => {
-  const navigate=useNavigate()
-
+  const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  const fileInputRef = useRef(null);
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -26,26 +29,28 @@ const ThreeD = () => {
     }
 
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("ThreeDimage", image);
 
-    // try {
-    //   const response = await fetch('YOUR_BACKEND_API_ENDPOINT', {
-    //     method: 'POST',
-    //     body: formData
-    //   });
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/three/createthreed",
+        formData
+      );
 
-    //   if (response.ok) {
-    //     const result = await response.json();
-    //     console.log('Form submitted successfully:', result);
-    //   } else {
-    //     console.error('Form submission failed:', response.statusText);
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting form:', error);
-    // }
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setImage(null);
+        setImagePreview(null);
+        fileInputRef.current.value = null;
+      } else {
+        console.error("Form submission failed:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
   const handleNavigate = () => {
-    navigate('/get3d-photos');
+    navigate("/get3d-photos");
   };
 
   return (
@@ -83,6 +88,7 @@ const ThreeD = () => {
                             accept="image/*"
                             onChange={handleImageChange}
                             required
+                            ref={fileInputRef}
                           />
                           {errors.image && (
                             <div className="invalid-feedback">
@@ -113,7 +119,7 @@ const ThreeD = () => {
                       <div className="my-3">
                         <button
                           className="btn btn-primary w-100 "
-                          type="submit" 
+                          type="submit"
                           onClick={handleNavigate}
                         >
                           Get all Photos
