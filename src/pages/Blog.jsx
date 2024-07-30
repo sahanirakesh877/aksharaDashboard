@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import "ckeditor5/ckeditor5.css";
 
@@ -31,6 +31,8 @@ const Blog = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [newCategory, setNewCategory] = useState("");
+
+  const editorRef = useRef();
 
   const [addCategory, setAddCategory] = useState(false);
 
@@ -98,6 +100,7 @@ const Blog = () => {
         setSelectedCategory("");
         setImagePreview(null);
         setErrors({});
+        editorRef.current.editor.setData("");
       } else {
         toast.error(response.data.error);
       }
@@ -261,6 +264,9 @@ const Blog = () => {
                                 Table,
                                 Undo,
                               ],
+                            }}
+                            onReady={(editor) => {
+                              editorRef.current = editor;
                             }}
                             onChange={(event, editor) => {
                               const data = editor.getData();
