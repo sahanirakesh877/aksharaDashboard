@@ -19,6 +19,8 @@ import ThreeDGallery from "./components/ThreeDGallery";
 import BannerImg from "./components/BannerImg";
 import GetNotices from "./components/GetNotices";
 import { Toaster } from "react-hot-toast";
+import GetBlogs from "./components/getBlogs";
+import GetBlog from "./components/getBlog";
 
 const App = () => {
   return (
@@ -36,6 +38,9 @@ const App = () => {
           {/* blogs start */}
           <Route path="/latest-blog" element={<Blog />} />
           <Route path="/activity-blog" element={<ActivityBlog />} />
+          <Route path="/get-blogs" element={<GetBlogs />} />
+          <Route path="/get-blogs/:id" element={<GetBlog />} />
+
           {/* blogs end */}
 
           {/* Banner Gallery start  */}

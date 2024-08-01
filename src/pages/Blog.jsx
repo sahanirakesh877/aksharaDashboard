@@ -19,6 +19,7 @@ import {
   Table,
   Undo,
 } from "ckeditor5";
+import { BeatLoader, ClipLoader } from "react-spinners";
 
 const Blog = () => {
   const [title, setTitle] = useState("");
@@ -26,11 +27,13 @@ const Blog = () => {
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [blogSubmitLoading, setBlogSubmitLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [newCategory, setNewCategory] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
 
   const editorRef = useRef();
 
@@ -76,8 +79,12 @@ const Blog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      setSubmitting(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("title", title);
@@ -103,10 +110,15 @@ const Blog = () => {
         editorRef.current.setData("");
       } else {
         toast.error(response.data.error);
+        console.log(response, "res with error");
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      // console.error("Error submitting form:", error);
+      console.log(error);
+
       toast.error("Error submitting form!");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -284,7 +296,11 @@ const Blog = () => {
                           <label htmlFor="blogcategory" className="form-label">
                             Category
                           </label>
-                          {addCategory ? (
+                          {loading ? (
+                            <div className="d-flex">
+                              Please wait <BeatLoader color="black" size={20} />
+                            </div>
+                          ) : addCategory ? (
                             <>
                               <input
                                 type="text"
@@ -352,10 +368,26 @@ const Blog = () => {
 
                         <div className="col-12">
                           <button
-                            className="btn btn-primary w-100"
+                            className={`btn btn-primary w-100`}
                             type="submit"
+                            disabled={submitting}
+                            style={{
+                              cursor: submitting ? "wait" : "pointer",
+                              position: "relative",
+                            }}
                           >
-                            Create Blog
+                            {submitting ? (
+                              <span className="d-flex justify-content-center align-items-center">
+                                Please Wait{" "}
+                                <ClipLoader
+                                  className="mx-4 "
+                                  color="white"
+                                  size={20}
+                                />
+                              </span>
+                            ) : (
+                              <span>Create Blog</span>
+                            )}
                           </button>
                         </div>
                       </form>

@@ -49,10 +49,10 @@ const Sidebar = () => {
                 </Link>
               </li>
               <li>
-                <a href>
+                <Link to="/get-blogs">
                   <i className="bi bi-circle" />
-                  <span>Tooltips</span>
-                </a>
+                  <span>Blogs</span>
+                </Link>
               </li>
             </ul>
           </li>

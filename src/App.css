@@ -1226,3 +1226,7 @@ h6 {
 .ck-editor__editable {
   min-height: 200px; /* Set the height you want */
 }
+
+.wait:hover {
+  cursor: wait;
+}
