@@ -21,6 +21,8 @@ import GetNotices from "./components/GetNotices";
 import { Toaster } from "react-hot-toast";
 import GetBlogs from "./components/getBlogs";
 import GetBlog from "./components/getBlog";
+import GetActivities from "./components/getActivities";
+import GetActivity from "./components/getActivity";
 
 const App = () => {
   return (
@@ -37,11 +39,29 @@ const App = () => {
 
           {/* blogs start */}
           <Route path="/latest-blog" element={<Blog />} />
-          <Route path="/activity-blog" element={<ActivityBlog />} />
           <Route path="/get-blogs" element={<GetBlogs />} />
           <Route path="/get-blogs/:id" element={<GetBlog />} />
-
+          <Route path="/get-blogs/:id/edit" element={<Blog edit={true} />} />
+          <Route
+            path="/get-blogs/:id/reupload"
+            element={<Blog reupload={true} />}
+          />
           {/* blogs end */}
+
+          {/* activities start */}
+          <Route path="/activity-blog" element={<ActivityBlog />} />
+          <Route path="/get-activities" element={<GetActivities />} />
+          <Route path="/get-activities/:id" element={<GetActivity />} />
+          <Route
+            path="/get-activities/:id/edit"
+            element={<ActivityBlog edit={true} />}
+          />
+          <Route
+            path="/get-activities/:id/reupload"
+            element={<ActivityBlog reupload={true} />}
+          />
+
+          {/* activities end */}
 
           {/* Banner Gallery start  */}
           <Route path="/banner-photo" element={<BannerPhotos />} />

@@ -20,8 +20,50 @@ import {
   Undo,
 } from "ckeditor5";
 import { BeatLoader, ClipLoader } from "react-spinners";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Blog = () => {
+const Blog = ({ edit, reupload }) => {
+  const [blogToEdit, setBlogToEdit] = useState();
+  const { id } = useParams();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function getSelectedPost() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_SERVERAPI}/api/v1/blog/${id}`
+        );
+        if (response.data.success) {
+          setBlogToEdit(response.data.blog);
+        } else {
+          console.error("Failed to fetch data:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        // setLoading(false);
+      }
+    }
+    if (edit) {
+      getSelectedPost();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (blogToEdit) {
+      setTitle(blogToEdit.title || "");
+      setDescription(blogToEdit.description || "");
+      setSelectedCategory(blogToEdit.category._id || "");
+      setImagePreview(
+        `${import.meta.env.VITE_SERVERAPI}/${blogToEdit.image.replace(
+          /\\/g,
+          "/"
+        )}`
+      );
+    }
+  }, [blogToEdit]);
+
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
@@ -67,10 +109,16 @@ const Blog = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!title) newErrors.title = "Please, enter the blog title!";
-    if (!image) newErrors.image = "Please, choose an image!";
-    if (!description) newErrors.description = "Please, enter the description!";
-    if (!selectedCategory) newErrors.category = "Please, select a category!";
+    if (!edit || reupload) {
+      if (!image) newErrors.image = "Please, choose an image!";
+    }
+    if (!reupload) {
+      if (!title) newErrors.title = "Please, enter the activity title!";
+      if (!description)
+        newErrors.description = "Please, enter the description!";
+
+      if (!selectedCategory) newErrors.category = "Please, select a category!";
+    }
 
     setErrors(newErrors);
 
@@ -145,6 +193,85 @@ const Blog = () => {
     }
   };
 
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    if (!validateForm()) {
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_SERVERAPI}/api/v1/blog/${id}`,
+        {
+          title,
+          description,
+          selectedCategory,
+        }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate(`/get-blogs/${id}`);
+      } else {
+        toast.error(response.data.error);
+        console.log(response, "res with error");
+      }
+    } catch (error) {
+      // console.error("Error submitting form:", error);
+      console.log(error);
+
+      toast.error("Error submitting form!");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReupload = async (e) => {
+    e.preventDefault();
+    console.log("uploading");
+    setSubmitting(true);
+
+    if (!validateForm()) {
+      console.log("validation failed");
+      setSubmitting(false);
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("activityImage", image);
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVERAPI}/api/v1/blog/${id}/reupload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(response);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate(`/get-blogs/${id}`);
+      } else {
+        toast.error(response.data.error);
+        console.log(response, "res with error");
+      }
+    } catch (error) {
+      // console.error("Error submitting form:", error);
+      console.log(error);
+
+      toast.error("Error submitting form!");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <>
       <main>
@@ -159,7 +286,8 @@ const Blog = () => {
                       className="logo d-flex align-items-center w-auto"
                     >
                       <span className="d-none d-lg-block">
-                        Create Blog Form
+                        {edit ? "Edit" : reupload ? "Reupload Image" : "Create"}{" "}
+                        Blog Form
                       </span>
                     </a>
                   </div>
@@ -168,203 +296,230 @@ const Blog = () => {
                       <form
                         className="row g-3 needs-validation w-100"
                         noValidate
-                        onSubmit={handleSubmit}
+                        onSubmit={
+                          reupload
+                            ? handleReupload
+                            : edit
+                            ? handleEdit
+                            : handleSubmit
+                        }
                       >
-                        <div className="col-12">
-                          <label htmlFor="blogtitle" className="form-label">
-                            Blog Title
-                          </label>
-                          <input
-                            type="text"
-                            name="title"
-                            className={`form-control ${
-                              errors.title ? "is-invalid" : ""
-                            }`}
-                            id="blogtitle"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required
-                          />
-                          {errors.title && (
-                            <div className="invalid-feedback">
-                              {errors.title}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="col-12">
-                          <label htmlFor="blogimage" className="form-label">
-                            Image
-                          </label>
-                          <input
-                            type="file"
-                            name="image"
-                            className={`form-control ${
-                              errors.image ? "is-invalid" : ""
-                            }`}
-                            id="blogimage"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            required
-                          />
-                          {errors.image && (
-                            <div className="invalid-feedback">
-                              {errors.image}
-                            </div>
-                          )}
-                        </div>
-
-                        {imagePreview && (
-                          <div className="col-12 d-flex justify-content-center align-items-center flex-column">
-                            <img
-                              src={imagePreview}
-                              alt="Selected"
-                              className="img-fluid"
+                        {!reupload && (
+                          <div className="col-12">
+                            <label htmlFor="blogtitle" className="form-label">
+                              Blog Title
+                            </label>
+                            <input
+                              type="text"
+                              name="title"
+                              className={`form-control ${
+                                errors.title ? "is-invalid" : ""
+                              }`}
+                              id="blogtitle"
+                              value={title}
+                              onChange={(e) => setTitle(e.target.value)}
+                              required
                             />
-                            <button
-                              className="bg-danger text-white p-2 mt-3"
-                              onClick={() => {
-                                setImage(null);
-                                setImagePreview(null);
-                              }}
-                            >
-                              cancel
-                            </button>
+                            {errors.title && (
+                              <div className="invalid-feedback">
+                                {errors.title}
+                              </div>
+                            )}
                           </div>
                         )}
 
-                        <div className="col-12">
-                          <label
-                            htmlFor="blogDescription"
-                            className="form-label"
-                          >
-                            Description
-                          </label>
-                          <CKEditor
-                            editor={ClassicEditor}
-                            id="blogDescription"
-                            config={{
-                              toolbar: [
-                                "undo",
-                                "redo",
-                                "|",
-                                "heading",
-                                "|",
-                                "bold",
-                                "italic",
-                                "|",
-                                "link",
-                                "insertTable",
-                                "mediaEmbed",
-                                "|",
-                                "bulletedList",
-                                "numberedList",
-                                "indent",
-                                "outdent",
-                              ],
-                              plugins: [
-                                Bold,
-                                Essentials,
-                                Heading,
-                                Indent,
-                                IndentBlock,
-                                Italic,
-                                Link,
-                                List,
-                                MediaEmbed,
-                                Paragraph,
-                                Table,
-                                Undo,
-                              ],
-                            }}
-                            onReady={(editor) => {
-                              editorRef.current = editor;
-                            }}
-                            onChange={(event, editor) => {
-                              const data = editor.getData();
-                              setDescription(data);
-                            }}
-                          />
-                          {errors.description && (
-                            <div className="invalid-feedback">
-                              {errors.description}
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="col-12">
-                          <label htmlFor="blogcategory" className="form-label">
-                            Category
-                          </label>
-                          {loading ? (
-                            <div className="d-flex">
-                              Please wait <BeatLoader color="black" size={20} />
-                            </div>
-                          ) : addCategory ? (
-                            <>
+                        {!edit && (
+                          <>
+                            <div className="col-12">
+                              <label htmlFor="blogimage" className="form-label">
+                                Image
+                              </label>
                               <input
-                                type="text"
-                                placeholder="Category Name"
+                                type="file"
+                                name="image"
                                 className={`form-control ${
                                   errors.image ? "is-invalid" : ""
                                 }`}
-                                value={newCategory}
-                                onChange={(e) => setNewCategory(e.target.value)}
+                                id="blogimage"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                required
                               />
-                              <button
-                                className={`btn btn-primary w-100 my-2 ${
-                                  loading ? "wait" : ""
-                                }`}
-                                onClick={addCategoryHandler}
-                                disabled={loading}
-                              >
-                                {loading ? "Adding" : "Add"}
-                              </button>
-                              <button
-                                className="btn btn-secondary w-100 my-2"
-                                onClick={() => setAddCategory(false)}
-                              >
-                                Cancel
-                              </button>
-                            </>
-                          ) : (
-                            <select
-                              name="category"
-                              className={`form-select ${
-                                errors.category ? "is-invalid" : ""
-                              }`}
-                              id="blogcategory"
-                              value={selectedCategory}
-                              onChange={(e) => {
-                                if (e.target.value === "add-new") {
-                                  setAddCategory(true);
-                                } else {
-                                  setSelectedCategory(e.target.value);
-                                }
-                              }}
-                              required
-                            >
-                              <option value="">Choose...</option>
-                              {!loading && categories && categories.length ? (
-                                categories.map((x, i) => (
-                                  <option value={x._id} key={i}>
-                                    {x.title}
-                                  </option>
-                                ))
-                              ) : (
-                                <option value="" disabled>
-                                  No categories
-                                </option>
+                              {errors.image && (
+                                <div className="invalid-feedback">
+                                  {errors.image}
+                                </div>
                               )}
-                              <option value="add-new">+ Add Category</option>
-                            </select>
-                          )}
-                          {errors.category && (
-                            <div className="invalid-feedback">
-                              {errors.category}
                             </div>
-                          )}
-                        </div>
+
+                            {imagePreview && (
+                              <div className="col-12 d-flex justify-content-center align-items-center flex-column">
+                                <img
+                                  src={imagePreview}
+                                  alt="Selected"
+                                  className="img-fluid"
+                                />
+                                <button
+                                  className="bg-danger text-white p-2 mt-3"
+                                  onClick={() => {
+                                    setImage(null);
+                                    setImagePreview(null);
+                                  }}
+                                >
+                                  cancel
+                                </button>
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        {!reupload && (
+                          <>
+                            <div className="col-12">
+                              <label
+                                htmlFor="blogDescription"
+                                className="form-label"
+                              >
+                                Description
+                              </label>
+                              <CKEditor
+                                editor={ClassicEditor}
+                                id="blogDescription"
+                                config={{
+                                  toolbar: [
+                                    "undo",
+                                    "redo",
+                                    "|",
+                                    "heading",
+                                    "|",
+                                    "bold",
+                                    "italic",
+                                    "|",
+                                    "link",
+                                    "insertTable",
+                                    "mediaEmbed",
+                                    "|",
+                                    "bulletedList",
+                                    "numberedList",
+                                    "indent",
+                                    "outdent",
+                                  ],
+                                  plugins: [
+                                    Bold,
+                                    Essentials,
+                                    Heading,
+                                    Indent,
+                                    IndentBlock,
+                                    Italic,
+                                    Link,
+                                    List,
+                                    MediaEmbed,
+                                    Paragraph,
+                                    Table,
+                                    Undo,
+                                  ],
+                                }}
+                                data={description}
+                                onReady={(editor) => {
+                                  editorRef.current = editor;
+                                }}
+                                onChange={(event, editor) => {
+                                  const data = editor.getData();
+                                  setDescription(data);
+                                }}
+                              />
+                              {errors.description && (
+                                <div className="invalid-feedback">
+                                  {errors.description}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="col-12">
+                              <label
+                                htmlFor="blogcategory"
+                                className="form-label"
+                              >
+                                Category
+                              </label>
+                              {loading ? (
+                                <div className="d-flex">
+                                  Please wait{" "}
+                                  <BeatLoader color="black" size={20} />
+                                </div>
+                              ) : addCategory ? (
+                                <>
+                                  <input
+                                    type="text"
+                                    placeholder="Category Name"
+                                    className={`form-control ${
+                                      errors.image ? "is-invalid" : ""
+                                    }`}
+                                    value={newCategory}
+                                    onChange={(e) =>
+                                      setNewCategory(e.target.value)
+                                    }
+                                  />
+                                  <button
+                                    className={`btn btn-primary w-100 my-2 ${
+                                      loading ? "wait" : ""
+                                    }`}
+                                    onClick={addCategoryHandler}
+                                    disabled={loading}
+                                  >
+                                    {loading ? "Adding" : "Add"}
+                                  </button>
+                                  <button
+                                    className="btn btn-secondary w-100 my-2"
+                                    onClick={() => setAddCategory(false)}
+                                  >
+                                    Cancel
+                                  </button>
+                                </>
+                              ) : (
+                                <select
+                                  name="category"
+                                  className={`form-select ${
+                                    errors.category ? "is-invalid" : ""
+                                  }`}
+                                  id="blogcategory"
+                                  value={selectedCategory}
+                                  onChange={(e) => {
+                                    if (e.target.value === "add-new") {
+                                      setAddCategory(true);
+                                    } else {
+                                      setSelectedCategory(e.target.value);
+                                    }
+                                  }}
+                                  required
+                                >
+                                  <option value="">Choose...</option>
+                                  {!loading &&
+                                  categories &&
+                                  categories.length ? (
+                                    categories.map((x, i) => (
+                                      <option value={x._id} key={i}>
+                                        {x.title}
+                                      </option>
+                                    ))
+                                  ) : (
+                                    <option value="" disabled>
+                                      No categories
+                                    </option>
+                                  )}
+                                  <option value="add-new">
+                                    + Add Category
+                                  </option>
+                                </select>
+                              )}
+                              {errors.category && (
+                                <div className="invalid-feedback">
+                                  {errors.category}
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
 
                         <div className="col-12">
                           <button
@@ -386,7 +541,14 @@ const Blog = () => {
                                 />
                               </span>
                             ) : (
-                              <span>Create Blog</span>
+                              <span>
+                                {" "}
+                                {edit
+                                  ? "Submit Edit"
+                                  : reupload
+                                  ? "Reupload"
+                                  : "Create Blog"}
+                              </span>
                             )}
                           </button>
                         </div>

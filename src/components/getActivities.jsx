@@ -14,8 +14,8 @@ const GetActivities = () => {
         );
         console.log("blogs", response.data);
         if (response.data.success) {
-          setData(response.data.blogs);
-          console.log(response.data.blogs);
+          setData(response.data.activities);
+          console.log(response.data.activities);
         } else {
           console.error("Failed to fetch data:", response.data.message);
         }
@@ -55,7 +55,7 @@ const GetActivities = () => {
       <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
         <h3 className="d-flex justify-content-center py-4">
           <span className="d-none d-lg-block border-bottom border-danger border-2">
-            All blogs
+            All Activities
           </span>
         </h3>
         <div className="container">

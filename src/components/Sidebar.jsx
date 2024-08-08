@@ -54,6 +54,12 @@ const Sidebar = () => {
                   <span>Blogs</span>
                 </Link>
               </li>
+              <li>
+                <Link to="/get-activities">
+                  <i className="bi bi-circle" />
+                  <span>Activities</span>
+                </Link>
+              </li>
             </ul>
           </li>
           {/* End Components Nav */}
